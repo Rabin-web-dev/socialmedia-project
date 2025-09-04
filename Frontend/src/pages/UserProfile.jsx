@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Button from "../components/UI/button";
-//import { Card } from "../components/UI/card";
-//import { CardContent } from "../components/UI/CardContent";
 import { MessageSquare } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import ImagePreviewModal from "../components/Model/ImagePreviewModal";

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setCredentials } from "../redux/slices/authSlice";
+import { login } from "../services/authService";
 
 const Login = () => {
   const [identifier, setIdentifier] = useState("");
@@ -23,60 +24,102 @@ const Login = () => {
     }
   }, [isAuthenticated, user, navigate]);
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setError("");
+
+  //   if (!identifier || !password) {
+  //     setError("Please enter both username/email and password.");
+  //     return;
+  //   }
+
+  //   try {
+  //     const response = await fetch("http://localhost:5000/api/auth/login", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ identifier, password }),
+  //     });
+
+  //     const data = await response.json();
+
+  //     if (!response.ok) {
+  //       setError(data.message || "Login failed");
+  //       return;
+  //     }
+
+  //     // ✅ Save credentials
+  //     localStorage.setItem("user", JSON.stringify(data.user));
+  //     localStorage.setItem("token", data.token);
+  //     dispatch(setCredentials({ user: data.user, token: data.token }));
+
+  //     // ✅ Add to users list for switch account
+  //     const existingUsers = JSON.parse(localStorage.getItem("users")) || [];
+  //     const alreadyExists = existingUsers.some((u) => u._id === data.user._id);
+  //     if (!alreadyExists) {
+  //       existingUsers.push({ ...data.user, token: data.token });
+  //       localStorage.setItem("users", JSON.stringify(existingUsers));
+  //     }
+  //     window.dispatchEvent(new Event("storage"));
+
+  //     // ✅ Redirect:
+  //     if (location.state?.fromSwitch) {
+  //       // came from "Add Another Account"
+  //       navigate("/switch-account");
+  //     } else {
+  //       // normal login
+  //       if (data.user.profileCreated) {
+  //         navigate(`/profile/${data.user.username}/${data.user._id}`);
+  //       } else {
+  //         navigate("/create-profile");
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error("Login Error:", error.message);
+  //     setError("Something went wrong. Please try again.");
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
+  e.preventDefault();
+  setError("");
 
-    if (!identifier || !password) {
-      setError("Please enter both username/email and password.");
-      return;
+  if (!identifier || !password) {
+    setError("Please enter both username/email and password.");
+    return;
+  }
+
+  try {
+    const { data } = await login({ identifier, password });
+
+    // ✅ Save credentials
+    localStorage.setItem("user", JSON.stringify(data.user));
+    localStorage.setItem("token", data.token);
+    dispatch(setCredentials({ user: data.user, token: data.token }));
+
+    // ✅ Add to users list for switch account
+    const existingUsers = JSON.parse(localStorage.getItem("users")) || [];
+    const alreadyExists = existingUsers.some((u) => u._id === data.user._id);
+    if (!alreadyExists) {
+      existingUsers.push({ ...data.user, token: data.token });
+      localStorage.setItem("users", JSON.stringify(existingUsers));
     }
+    window.dispatchEvent(new Event("storage"));
 
-    try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ identifier, password }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.message || "Login failed");
-        return;
-      }
-
-      // ✅ Save credentials
-      localStorage.setItem("user", JSON.stringify(data.user));
-      localStorage.setItem("token", data.token);
-      dispatch(setCredentials({ user: data.user, token: data.token }));
-
-      // ✅ Add to users list for switch account
-      const existingUsers = JSON.parse(localStorage.getItem("users")) || [];
-      const alreadyExists = existingUsers.some((u) => u._id === data.user._id);
-      if (!alreadyExists) {
-        existingUsers.push({ ...data.user, token: data.token });
-        localStorage.setItem("users", JSON.stringify(existingUsers));
-      }
-      window.dispatchEvent(new Event("storage"));
-
-      // ✅ Redirect:
-      if (location.state?.fromSwitch) {
-        // came from "Add Another Account"
-        navigate("/switch-account");
+    // ✅ Redirect:
+    if (location.state?.fromSwitch) {
+      navigate("/switch-account");
+    } else {
+      if (data.user.profileCreated) {
+        navigate(`/profile/${data.user.username}/${data.user._id}`);
       } else {
-        // normal login
-        if (data.user.profileCreated) {
-          navigate(`/profile/${data.user.username}/${data.user._id}`);
-        } else {
-          navigate("/create-profile");
-        }
+        navigate("/create-profile");
       }
-    } catch (error) {
-      console.error("Login Error:", error.message);
-      setError("Something went wrong. Please try again.");
     }
-  };
+  } catch (error) {
+    console.error("Login Error:", error.response?.data || error.message);
+    setError(error.response?.data?.message || "Something went wrong. Please try again.");
+  }
+};
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">

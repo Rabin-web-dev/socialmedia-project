@@ -1,6 +1,5 @@
-import axios from "axios";
+import api from "../utils/api";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
-export const signup = async (userData) => {
-  return await axios.post(`${API_URL}/signup`, userData);
-};
+export const signup = (userData) => api.post("/auth/signup", userData);
+export const login = (userData) => api.post("/auth/login", userData);
+export const logout = () => api.post("/auth/logout");
