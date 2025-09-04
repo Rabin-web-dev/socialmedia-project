@@ -11,7 +11,7 @@ const SocketProvider = ({ children, user }) => {
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [typingStatus, setTypingStatus] = useState({});
   const [notifications, setNotifications] = useState([]);
-  const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:5000";
+  const SOCKET_URL = import.meta.env.VITE_API_BASE || "http://localhost:5000";
 
   // ✅ Add notification safely (no duplicates)
   const addNotification = useCallback((notif) => {
