@@ -10,9 +10,14 @@ const SavedPost = () => {
   const navigate = useNavigate();
 
   const fetchSavedPosts = useCallback(async () => {
+       if (!userId || !token) {
+      console.warn("⚠️ No userId or token found in localStorage");
+      setLoading(false);
+      return;
+    }
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/posts/${userId}/saved-posts`,
+        `https://stark-socialmedia.onrender.com/api/posts/${userId}/saved-posts`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setSavedPosts(res.data.savedPosts || []);
