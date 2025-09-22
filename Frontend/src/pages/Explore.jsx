@@ -10,7 +10,7 @@ const Explore = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await api.get("/posts"); // ✅ Uses api.js (Render URL)
+        const res = await api.get("/posts/"); // ✅ Uses api.js (Render URL)
         const fetchedPosts = Array.isArray(res.data.posts)
           ? res.data.posts
           : Array.isArray(res.data)

@@ -1,7 +1,6 @@
 import { useSelector } from "react-redux";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useEffect, useState, useCallback, useRef } from "react";
-import axios from "axios";
 import api from "../utils/api";
 import ChatHeader from "../components/Chat/ChatHeader";
 import ChatBody from "../components/Chat/ChatBody";
@@ -40,8 +39,8 @@ const Messages = () => {
 
   const fetchMessages = useCallback(async () => {
     try {
-      const res = await axios.get(
-        `https://stark-socialmedia.onrender.com/api/messages/conversation/${userId}`,
+      const res = await api.get(
+        `/messages/conversation/${userId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

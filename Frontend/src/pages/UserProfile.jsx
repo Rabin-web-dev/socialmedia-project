@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../utils/api";
 import Button from "../components/UI/button";
 import { MessageSquare } from "lucide-react";
 import { useLocation } from "react-router-dom";
@@ -25,8 +25,8 @@ const UserProfile = () => {
 
     const fetchUser = async () => {
       try {
-        const res = await axios.get(
-          `https://stark-socialmedia.onrender.com/api/profile/${username}/${userId}`
+        const res = await api.get(
+          `/profile/${username}/${userId}`
         );
         if (isMounted) {
           console.log("Profile API Response 👉", res.data);
@@ -42,8 +42,8 @@ const UserProfile = () => {
 
     const fetchPosts = async () => {
       try {
-        const res = await axios.get(
-          `https://stark-socialmedia.onrender.com/api/posts/user/${username}/${userId}`
+        const res = await api.get(
+          `/posts/user/${username}/${userId}`
         );
         if (isMounted) {
           setPosts(Array.isArray(res.data.posts) ? res.data.posts : []);
@@ -67,8 +67,8 @@ const UserProfile = () => {
   const handleFollowToggle = async () => {
     try {
       const endpoint = isFollowing ? "unfollow" : "follow";
-      const res = await axios.post(
-        `https://stark-socialmedia.onrender.com/api/users/${endpoint}/${username}/${userId}`,
+      const res = await api.post(
+        `/users/${endpoint}/${username}/${userId}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );

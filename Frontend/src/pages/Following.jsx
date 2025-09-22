@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
-import axios from "axios";
+import api from "../utils/api";
 import toast from "react-hot-toast";
 
 const Following = () => {
@@ -12,8 +12,8 @@ const Following = () => {
   const fetchFollowing = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await axios.get(
-        `https://stark-socialmedia.onrender.com/api/users/profile/${username}/${userId}/following`,
+      const res = await api.get(
+        `/users/profile/${username}/${userId}/following`,
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
@@ -47,8 +47,8 @@ const Following = () => {
         return;
       }
 
-      await axios.post(
-        `https://stark-socialmedia.onrender.com/api/users/unfollow/${followingId}/${userId}`,
+      await api.post(
+        `/users/unfollow/${followingId}/${userId}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
