@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import PostCard from "../components/Posts/PostCard";
 import Skeleton from "react-loading-skeleton";
 
@@ -13,7 +13,7 @@ const Home = () => {
     isFetching.current = true;
 
     try {
-      const res = await axios.get("https://stark-socialmedia.onrender.com/api/posts/");
+      const res = await api.get("/posts");
       const fetchedPosts = Array.isArray(res.data.posts)
         ? res.data.posts
         : Array.isArray(res.data)
