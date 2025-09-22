@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import { SocketContext } from "../context/SocketContext";
 import { useNavigate } from "react-router-dom";
 
@@ -13,7 +13,7 @@ const Notification = () => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const res = await axios.get("https://stark-socialmedia.onrender.com/api/notifications", {
+        const res = await api.get("/notifications", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setNotifications(res.data.notifications || []);
@@ -41,8 +41,8 @@ const Notification = () => {
   // ✅ Mark notification as read + optional navigation
   const markAsRead = async (n) => {
     try {
-      await axios.put(
-        `https://stark-socialmedia.onrender.com/api/notifications/${n._id}`,
+      await api.put(
+        `/notifications/${n._id}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
