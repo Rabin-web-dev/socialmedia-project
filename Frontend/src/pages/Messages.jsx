@@ -2,6 +2,7 @@ import { useSelector } from "react-redux";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useEffect, useState, useCallback, useRef } from "react";
 import axios from "axios";
+import api from "../utils/api";
 import ChatHeader from "../components/Chat/ChatHeader";
 import ChatBody from "../components/Chat/ChatBody";
 import ChatInput from "../components/Chat/ChatInput";
@@ -28,7 +29,7 @@ const Messages = () => {
 
   const fetchUser = useCallback(async () => {
     try {
-      const res = await axios.get(`/api/users/${user?.username}/${userId}`, {
+      const res = await api.get(`/users/${user?.username}/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setFriend(res.data?.user || res.data);

@@ -26,7 +26,7 @@ const UserProfile = () => {
     const fetchUser = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:5000/api/profile/${username}/${userId}`
+          `https://stark-socialmedia.onrender.com/api/profile/${username}/${userId}`
         );
         if (isMounted) {
           console.log("Profile API Response 👉", res.data);
@@ -43,7 +43,7 @@ const UserProfile = () => {
     const fetchPosts = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:5000/api/posts/user/${username}/${userId}`
+          `https://stark-socialmedia.onrender.com/api/posts/user/${username}/${userId}`
         );
         if (isMounted) {
           setPosts(Array.isArray(res.data.posts) ? res.data.posts : []);
@@ -68,7 +68,7 @@ const UserProfile = () => {
     try {
       const endpoint = isFollowing ? "unfollow" : "follow";
       const res = await axios.post(
-        `http://localhost:5000/api/users/${endpoint}/${username}/${userId}`,
+        `https://stark-socialmedia.onrender.com/api/users/${endpoint}/${username}/${userId}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );

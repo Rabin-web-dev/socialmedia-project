@@ -29,7 +29,7 @@ const CreateProfile = () => {
       data.append("bio", formData.bio);
       data.append("profilePic", formData.profilePic);
 
-      const response = await axios.post("http://localhost:5000/api/profile/create-profile", data,
+      const response = await axios.post("https://stark-socialmedia.onrender.com/profile/create-profile", data,
         {
           headers: {
             Authorization: `Bearer ${token}`,

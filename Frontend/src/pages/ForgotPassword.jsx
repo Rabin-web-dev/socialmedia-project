@@ -13,7 +13,7 @@ export default function ForgetPassword() {
     setMessage("");
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/forget-password", { email });
+      const res = await axios.post("https://stark-socialmedia.onrender.com/api/auth/forget-password", { email });
       setMessage(res.data.message);
     } catch (error) {
       setMessage(error.response?.data?.message || "Something went wrong");

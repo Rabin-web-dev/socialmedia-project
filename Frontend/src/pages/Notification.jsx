@@ -13,7 +13,7 @@ const Notification = () => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/notifications", {
+        const res = await axios.get("https://stark-socialmedia.onrender.com/api/notifications", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setNotifications(res.data.notifications || []);
@@ -42,7 +42,7 @@ const Notification = () => {
   const markAsRead = async (n) => {
     try {
       await axios.put(
-        `http://localhost:5000/api/notifications/${n._id}`,
+        `https://stark-socialmedia.onrender.com/api/notifications/${n._id}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );

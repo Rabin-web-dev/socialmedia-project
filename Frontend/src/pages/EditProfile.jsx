@@ -31,7 +31,7 @@ const EditProfile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/profile/${username}/${userId}`);
+        const res = await axios.get(`https://stark-socialmedia.onrender.com/api/profile/${username}/${userId}`);
         const data = res.data;
 
         setForm({
@@ -109,7 +109,7 @@ const EditProfile = () => {
       };
 
       await axios.put(
-        `http://localhost:5000/api/profile/edit-profile/${username}/${userId}`,
+        `https://stark-socialmedia.onrender.com/api/profile/edit-profile/${username}/${userId}`,
         updatedData,
         {
           headers: {

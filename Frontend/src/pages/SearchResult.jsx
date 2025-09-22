@@ -20,7 +20,7 @@ const SearchResults = () => {
 
     try {
 
-      const url = `http://localhost:5000/api/users/${isFollowing ? "unfollow" : "follow"}/${username}/${userId}`;
+      const url = `https://stark-socialmedia.onrender.com/api/users/${isFollowing ? "unfollow" : "follow"}/${username}/${userId}`;
 
       const res = await axios.post(
         url,
@@ -43,8 +43,8 @@ const SearchResults = () => {
     const fetchResults = async () => {
       try {
         const [userRes, postRes] = await Promise.all([
-          axios.get(`http://localhost:5000/api/search/users?q=${query}`),
-          axios.get(`http://localhost:5000/api/search/posts?q=${query}`),
+          axios.get(`https://stark-socialmedia.onrender.com/api/search/users?q=${query}`),
+          axios.get(`https://stark-socialmedia.onrender.com/api/search/posts?q=${query}`),
         ]);
         setUserResults(userRes.data);
         setPostResults(postRes.data);

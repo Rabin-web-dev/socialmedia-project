@@ -29,7 +29,7 @@ const SinglePost = () => {
 
     const fetchPost = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/posts/${id}`, {
+        const res = await axios.get(`https://stark-socialmedia.onrender.com/api/posts/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setPost(res.data);
@@ -38,7 +38,7 @@ const SinglePost = () => {
 
         // Check saved status
         const savedRes = await axios.get(
-          `http://localhost:5000/api/posts/${currentUserId}/saved-posts`,
+          `https://stark-socialmedia.onrender.com/api/posts/${currentUserId}/saved-posts`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setSaved(savedRes.data.savedPosts.some((p) => p._id === id));
@@ -68,7 +68,7 @@ const SinglePost = () => {
 
     try {
       const res = await axios.put(
-        `http://localhost:5000/api/posts/${post._id}/like`,
+        `https://stark-socialmedia.onrender.com/api/posts/${post._id}/like`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -88,7 +88,7 @@ const SinglePost = () => {
 
     try {
       const res = await axios.put(
-        `http://localhost:5000/api/users/${currentUserId}/saved-posts`,
+        `https://stark-socialmedia.onrender.com/api/users/${currentUserId}/saved-posts`,
         { postId: post._id },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -103,7 +103,7 @@ const SinglePost = () => {
     if (!commentText.trim()) return;
     try {
       const res = await axios.post(
-        `http://localhost:5000/api/posts/${id}/comment`,
+        `https://stark-socialmedia.onrender.com/api/posts/${id}/comment`,
         { text: commentText },
         { headers: { Authorization: `Bearer ${token}` } }
       );

@@ -60,7 +60,7 @@ const CreatePost = () => {
       }
 
       const postRes = await fetch(
-        "http://localhost:5000/api/posts/create-post",
+        "https://stark-socialmedia.onrender.com/api/posts/create-post",
         {
           method: "POST",
           headers: {

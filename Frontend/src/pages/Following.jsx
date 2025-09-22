@@ -13,7 +13,7 @@ const Following = () => {
     try {
       setLoading(true);
       const res = await axios.get(
-        `http://localhost:5000/api/users/profile/${username}/${userId}/following`,
+        `https://stark-socialmedia.onrender.com/api/users/profile/${username}/${userId}/following`,
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
@@ -48,7 +48,7 @@ const Following = () => {
       }
 
       await axios.post(
-        `http://localhost:5000/api/users/unfollow/${followingId}/${userId}`,
+        `https://stark-socialmedia.onrender.com/api/users/unfollow/${followingId}/${userId}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
