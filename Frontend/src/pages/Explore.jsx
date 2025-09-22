@@ -5,21 +5,25 @@ import { X, ChevronLeft, ChevronRight } from "lucide-react"; // Icons
 const Explore = () => {
   const [posts, setPosts] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(null);
-  const token = localStorage.getItem("token");
+  //const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await api.get("/posts", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setPosts(res.data);
+        const res = await api.get("/posts"); // ✅ Uses api.js (Render URL)
+        const fetchedPosts = Array.isArray(res.data.posts)
+          ? res.data.posts
+          : Array.isArray(res.data)
+          ? res.data
+          : [];
+        setPosts(fetchedPosts);
       } catch (err) {
         console.error("❌ Error fetching explore posts:", err);
+        setPosts([]);
       }
     };
     fetchPosts();
-  }, [token]);
+  }, []);
 
   const selectedPost = selectedIndex !== null ? posts[selectedIndex] : null;
 
