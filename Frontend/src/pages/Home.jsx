@@ -13,7 +13,7 @@ const Home = () => {
     isFetching.current = true;
 
     try {
-      const res = await axios.get("http://localhost:5000/api/posts/");
+      const res = await axios.get("https://stark-socialmedia.onrender.com/api/posts/");
       const fetchedPosts = Array.isArray(res.data.posts)
         ? res.data.posts
         : Array.isArray(res.data)

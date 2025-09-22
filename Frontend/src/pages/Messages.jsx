@@ -7,7 +7,6 @@ import ChatBody from "../components/Chat/ChatBody";
 import ChatInput from "../components/Chat/ChatInput";
 import useSocketContext from "../hooks/useSocketContext";
 import IncomingCallModal from "../components/Model/IncomingCallModal";
-import api from "../utils/api";
 
 const Messages = () => {
   const auth = useSelector((state) => state.auth);
@@ -29,7 +28,7 @@ const Messages = () => {
 
   const fetchUser = useCallback(async () => {
     try {
-      const res = await api.get(`/users/${user?.username}/${userId}`, {
+      const res = await axios.get(`/api/users/${user?.username}/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setFriend(res.data?.user || res.data);
@@ -41,7 +40,7 @@ const Messages = () => {
   const fetchMessages = useCallback(async () => {
     try {
       const res = await axios.get(
-        `/messages/conversation/${userId}`,
+        `https://stark-socialmedia.onrender.com/api/messages/conversation/${userId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
