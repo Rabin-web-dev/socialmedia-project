@@ -22,7 +22,7 @@ const CommentModal = ({ isOpen, onClose, post, refreshPost }) => {
   const handleLikeToggle = async () => {
     try {
       await axios.put(
-        `http://localhost:5000/api/posts/${post._id}/like`,
+        `https://stark-socialmedia.onrender.com/api/posts/${post._id}/like`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -36,7 +36,7 @@ const CommentModal = ({ isOpen, onClose, post, refreshPost }) => {
 const handleSaveToggle = async () => {
   try {
     const res = await axios.put(
-      `http://localhost:5000/api/posts/${user._id}/saved-posts`,
+      `https://stark-socialmedia.onrender.com/api/posts/${user._id}/saved-posts`,
       { postId: post._id }, // ✅ send postId
       { headers: { Authorization: `Bearer ${token}` } }
     );

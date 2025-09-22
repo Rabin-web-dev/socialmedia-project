@@ -29,7 +29,7 @@ const PostCard = ({ post }) => {
   useEffect(() => {
     const fetchCurrentUser = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/users/me", {
+        const res = await axios.get("https://stark-socialmedia.onrender.com/api/users/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setCurrentUser(res.data);
@@ -44,7 +44,7 @@ const PostCard = ({ post }) => {
     try {
       setLoading(true);
       await axios.put(
-        `http://localhost:5000/api/posts/${post._id}/like`,
+        `https://stark-socialmedia.onrender.com/api/posts/${post._id}/like`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -64,7 +64,7 @@ const PostCard = ({ post }) => {
     try {
       setLoading(true);
       const res = await axios.put(
-        `http://localhost:5000/api/posts/${user._id}/saved-posts`,
+        `https://stark-socialmedia.onrender.com/api/posts/${user._id}/saved-posts`,
         { postId: post._id },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -92,7 +92,7 @@ const PostCard = ({ post }) => {
     try {
       setLoading(true);
       const res = await axios.post(
-        `http://localhost:5000/api/posts/${post._id}/comment`,
+        `https://stark-socialmedia.onrender.com/api/posts/${post._id}/comment`,
         { text: commentText },
         { headers: { Authorization: `Bearer ${token}` } }
       );

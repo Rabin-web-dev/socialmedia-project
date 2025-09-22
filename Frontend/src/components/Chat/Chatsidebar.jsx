@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
+import api from "../../utils/api";
 import useSocketContext from "../../hooks/useSocketContext";
 
 const Chatsidebar = () => {
@@ -18,8 +18,8 @@ const Chatsidebar = () => {
   // ✅ Fetch following + last message + unread counts
   const fetchFollowingWithLastMessages = useCallback(async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:5000/api/users/profile/${username}/${userId}/following`,
+      const res = await api.get(
+        `/users/profile/${username}/${userId}/following`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -28,8 +28,8 @@ const Chatsidebar = () => {
       const enrichedFollowing = await Promise.all(
         followingData.map(async (friend) => {
           try {
-            const msgRes = await axios.get(
-              `http://localhost:5000/api/messages/last/${friend._id}`,
+            const msgRes = await api.get(
+              `/messages/last/${friend._id}`,
               { headers: { Authorization: `Bearer ${token}` } }
             );
             return {

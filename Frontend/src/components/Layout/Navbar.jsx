@@ -14,7 +14,7 @@ const Navbar = () => {
 
   const fetchSearchResults = debounce(async (value) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/search/users?q=${value}`);
+      const res = await fetch(`https://stark-socialmedia.onrender.com/api/search/users?q=${value}`);
       const data = await res.json();
       setResults(data);
       setShowDropdown(true);
