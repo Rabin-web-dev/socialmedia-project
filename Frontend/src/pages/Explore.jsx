@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import { X, ChevronLeft, ChevronRight } from "lucide-react"; // Icons
 
 const Explore = () => {
@@ -10,7 +10,7 @@ const Explore = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/posts/", {
+        const res = await api.get("/posts", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setPosts(res.data);

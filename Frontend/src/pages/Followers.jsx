@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 // import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import api from "../utils/api";
 import toast from "react-hot-toast";
 
 const Followers = () => {
@@ -14,7 +14,7 @@ const Followers = () => {
   const fetchFollowers = useCallback(async () => {
   try {
     setLoading(true);
-    const res = await axios.get(`http://localhost:5000/api/users/profile/${username}/${userId}/followers`, {
+    const res = await api.get(`/users/profile/${username}/${userId}/followers`, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
     });
     console.log("Followers API Response:", res.data);
@@ -42,8 +42,8 @@ const handleToggleFollow = async (followerId, isFollowingBack) => {
 
     if (isFollowingBack) {
       // Unfollow request
-      await axios.post(
-        `http://localhost:5000/api/users/unfollow/${followerId}/${userId}`,
+      await api.post(
+        `/users/unfollow/${followerId}/${userId}`,
         {},
         {
           headers: {
@@ -59,8 +59,8 @@ const handleToggleFollow = async (followerId, isFollowingBack) => {
       );
     } else {
       // Follow request
-      await axios.post(
-        `http://localhost:5000/api/users/follow/${followerId}/${userId}`,
+      await api.post(
+        `/users/follow/${followerId}/${userId}`,
         {},
         {
           headers: {
