@@ -19,11 +19,9 @@ import SavedPost from "../pages/SavedPost";
 import Notification from "../pages/Notification";
 import Messages from "../pages/Messages";
 import Settings from "../pages/Settings";
-import BlockedUser from "../pages/BlockedUser";
 import Report from "../pages/Report";
 import FollowersList from "../pages/Followers";
 import FollowingList from "../pages/Following";
-import FollowRequest from "../pages/FollowRequest";
 import SwitchAccount from "../pages/SwitchAccount";
 import MessagesLayout from "../pages/MessagesLayout";
 import CreateProfile from "../pages/CreateProfile";
@@ -118,11 +116,9 @@ const AppRoutes = () => {
                   <Route path="/call/:roomID" element={<ZegoCall />} />
                   <Route path="/search" element={<SearchResult />} />
                   <Route path="/settings" element={<Settings />} />
-                  <Route path="/blocked-users" element={<BlockedUser />} />
                   <Route path="/report" element={<Report />} />
                   <Route path="/profile/:username/:userId/followers" element={<FollowersList />} />
                   <Route path="/profile/:username/:userId/following" element={<FollowingList />} />
-                  <Route path="/follow-requests" element={<FollowRequest />} />
                   <Route path="/switch-account" element={<SwitchAccount />} />
                 </>
               )}

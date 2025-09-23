@@ -6,24 +6,39 @@ import { useNavigate } from "react-router-dom";
 const Notification = () => {
   const [notifications, setNotifications] = useState([]);
   const { notifications: liveNotifications } = useContext(SocketContext);
-  const token = localStorage.getItem("token");
+  // const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
   // ✅ Fetch notifications on page load
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const res = await api.get("/notifications", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setNotifications(res.data.notifications || []);
-      } catch (err) {
-        console.error("❌ Error fetching notifications:", err);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchNotifications = async () => {
+  //     try {
+  //       const res = await api.get("/notifications", {
+  //         headers: { Authorization: `Bearer ${token}` },
+  //       });
+  //       setNotifications(res.data.notifications || []);
+  //     } catch (err) {
+  //       console.error("❌ Error fetching notifications:", err);
+  //     }
+  //   };
 
-    fetchNotifications();
-  }, [token]);
+  //   fetchNotifications();
+  // }, [token]);
+useEffect(() => {
+  const fetchNotifications = async () => {
+    try {
+      const res = await api.get("/notifications");
+      setNotifications(res.data.notifications || []);
+    } catch (err) {
+      console.error("❌ Error fetching notifications:", err);
+    }
+  };
+
+  fetchNotifications();
+}, []);
+
+
+
 
   // ✅ Merge live notifications in real-time
   useEffect(() => {
@@ -39,27 +54,42 @@ const Notification = () => {
   }, [liveNotifications]);
 
   // ✅ Mark notification as read + optional navigation
+  // const markAsRead = async (n) => {
+  //   try {
+  //     await api.put(
+  //       `/notifications/${n._id}`,
+  //       {},
+  //       { headers: { Authorization: `Bearer ${token}` } }
+  //     );
+
+  //     setNotifications((prev) =>
+  //       prev.map((item) =>
+  //         item._id === n._id ? { ...item, isRead: true } : item
+  //       )
+  //     );
+
+  //     // ✅ Navigate to post if notification is related to one
+  //     if (n.post) navigate(`/post/${n.post}`);
+  //     else navigate(`/profile/${n.sender?._id}`);
+  //   } catch (err) {
+  //     console.error("❌ Error marking notification as read:", err);
+  //   }
+  // };
   const markAsRead = async (n) => {
-    try {
-      await api.put(
-        `/notifications/${n._id}`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+  try {
+    await api.put(`/notifications/${n._id}`);
+    setNotifications((prev) =>
+      prev.map((item) =>
+        item._id === n._id ? { ...item, isRead: true } : item
+      )
+    );
 
-      setNotifications((prev) =>
-        prev.map((item) =>
-          item._id === n._id ? { ...item, isRead: true } : item
-        )
-      );
-
-      // ✅ Navigate to post if notification is related to one
-      if (n.post) navigate(`/post/${n.post}`);
-      else navigate(`/profile/${n.sender?._id}`);
-    } catch (err) {
-      console.error("❌ Error marking notification as read:", err);
-    }
-  };
+    if (n.post) navigate(`/post/${n.post}`);
+    else navigate(`/profile/${n.sender?._id}`);
+  } catch (err) {
+    console.error("❌ Error marking notification as read:", err);
+  }
+};
 
   return (
     <div className="bg-white min-h-screen p-4">
