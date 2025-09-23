@@ -57,7 +57,7 @@ const Explore = () => {
   return (
     <div className="bg-white min-h-screen flex justify-center">
       {/* Posts Grid */}
-      <div className="grid grid-cols-3 gap-1 w-full">
+      <div className="grid grid-cols-3 gap-x-1 gap-y-0 w-full">
         {posts.map((post, idx) => (
           <div
             key={post._id}
