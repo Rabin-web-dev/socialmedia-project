@@ -5,6 +5,9 @@ import Button from "../components/UI/button";
 import { MessageSquare } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import ImagePreviewModal from "../components/Model/ImagePreviewModal";
+import DefaultMale from "../assets/image/SocialMediaProfileImageDefaultMale.jpg";
+import DefaultFemale from "../assets/image/SocialMediaProfileImageDefaultFemale.jpg";
+import DefaultImage from "../assets/image/SocialMediaDefaultImage.jpg";
 
 const UserProfile = () => {
   const { username, userId } = useParams();
@@ -87,11 +90,9 @@ const UserProfile = () => {
 
   const getProfileImage = () => {
     if (user?.profilePic) return user.profilePic;
-    if (user?.gender === "male")
-      return "/Images/SocialMediaProfileImageDefaultMale.jpg";
-    if (user?.gender === "female")
-      return "/Images/SocialMediaProfileImageDefaultFemale.jpg";
-    return "/Images/SocialMediaDefaultImage.jpg";
+    if (user?.gender === "male") return DefaultMale;
+    if (user?.gender === "female") return DefaultFemale;
+    return DefaultImage;
   };
 
   if (!user) return <div className="p-6">Loading profile...</div>;
@@ -103,7 +104,7 @@ const UserProfile = () => {
       <img
         src={getProfileImage()}
         alt="Profile"
-        className="w-40 h-40 rounded-full object-cover shadow-md cursor-pointer"
+        className="w-50 h-50 rounded-full object-cover shadow-md cursor-pointer"
         onClick={() => setIsPreviewOpen(true)}
       />
 
