@@ -5,9 +5,9 @@ import Button from "../components/UI/button";
 import { MessageSquare } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import ImagePreviewModal from "../components/Model/ImagePreviewModal";
-import DefaultMale from "../assets/image/SocialMediaProfileImageDefaultMale.jpg";
-import DefaultFemale from "../assets/image/SocialMediaProfileImageDefaultFemale.jpg";
-import DefaultImage from "../assets/image/SocialMediaDefaultImage.jpg";
+import DefaultMale from "../assets/Images/SocialMediaProfileImageDefaultMale.webp";
+import DefaultFemale from "../assets/Images/SocialMediaProfileImageDefaultFemale.webp";
+import DefaultImage from "../assets/Images/SocialMediaDefaultImage.jpg";
 
 const UserProfile = () => {
   const { username, userId } = useParams();
