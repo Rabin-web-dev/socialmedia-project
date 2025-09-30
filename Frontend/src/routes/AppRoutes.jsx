@@ -87,9 +87,11 @@ const AppRoutes = () => {
             className={`
               ${isMessagesPage
                 ? "h-full w-full"
-                : ["/explore", "/notifications", "/saved-posts"].includes(location.pathname)
+                : ["/explore", "/notifications", "/saved-posts", "/profile"].some(path =>
+          location.pathname.startsWith(path)
+        )
                 ? "w-full px-2"
-                : "md:max-w-xl w-full px-2 mx-auto"}
+                : "w-full px-2"}
             `}
           >
             <Routes>
