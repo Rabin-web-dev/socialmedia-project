@@ -96,132 +96,140 @@ const UserProfile = () => {
 
   if (!user) return <div className="p-6">Loading profile...</div>;
 
-  return (
-    <div className="flex-1 w-full p-4 space-y-6 min-h-screen">
-      <div className="flex flex-col sm:flex-row gap-13 items-center sm:items-start">
-        <img
-          src={getProfileImage()}
-          alt="Profile"
-          className="w-40 h-40 rounded-full object-cover shadow-md"
-          onClick={() => setIsPreviewOpen(true)}
-        />
-        <div className="flex-1 space-y-3 text-center sm:text-left">
-          <h2 className="text-3xl font-bold">
-            @{user?.username || "username"}
-          </h2>
-          <p className="text-gray-800">{user?.name || "Name not set"}</p>
-          <p className="whitespace-pre-line text-gray-800">{user?.bio || "No bio available"}</p>
-
-          {/* Image Preview Modal */}
-      <ImagePreviewModal
-        isOpen={isPreviewOpen}
-        onClose={() => setIsPreviewOpen(false)}
-        imageUrl={user.profilePic}
+ return (
+  <div className="flex-1 w-full p-4 space-y-6 min-h-screen">
+    {/* Profile Header */}
+    <div className="flex flex-col items-center text-center gap-6">
+      <img
+        src={getProfileImage()}
+        alt="Profile"
+        className="w-40 h-40 rounded-full object-cover shadow-md cursor-pointer"
+        onClick={() => setIsPreviewOpen(true)}
       />
 
-          <div className="flex flex-wrap justify-center sm:justify-start gap-4 text-sm text-gray-500 mt-2">
-            <button
-              className="hover:underline cursor-pointer"
-              onClick={() =>
-                navigate(`/profile/${username}/${userId}/followers`)
-              }
-            >
-              <strong>{user.followers?.length || 0}</strong> Followers
-            </button>
-            <button
-              className="hover:underline cursor-pointer"
-              onClick={() =>
-                navigate(`/profile/${username}/${userId}/following`)
-              }
-            >
-              <strong>{user.following?.length || 0}</strong> Following
-            </button>
-            <span>
-              <strong>{posts.length}</strong> Posts
-            </span>
-          </div>
+      <div className="space-y-3">
+        <h2 className="text-3xl font-bold">
+          @{user?.username || "username"}
+        </h2>
+        <p className="text-gray-800">{user?.name || "Name not set"}</p>
+        <p className="whitespace-pre-line text-gray-800">
+          {user?.bio || "No bio available"}
+        </p>
 
-          <div className="flex justify-center sm:justify-start gap-3 mt-3">
-            {isOwnProfile ? (
-              <Button
-                onClick={() => navigate(`/edit-profile/${username}/${userId}`)}
-              >
-                Edit Profile
+        {/* Image Preview Modal */}
+        <ImagePreviewModal
+          isOpen={isPreviewOpen}
+          onClose={() => setIsPreviewOpen(false)}
+          imageUrl={user.profilePic}
+        />
+
+        {/* Followers / Following / Posts */}
+        <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-500 mt-2">
+          <button
+            className="hover:underline cursor-pointer"
+            onClick={() =>
+              navigate(`/profile/${username}/${userId}/followers`)
+            }
+          >
+            <strong>{user.followers?.length || 0}</strong> Followers
+          </button>
+          <button
+            className="hover:underline cursor-pointer"
+            onClick={() =>
+              navigate(`/profile/${username}/${userId}/following`)
+            }
+          >
+            <strong>{user.following?.length || 0}</strong> Following
+          </button>
+          <span>
+            <strong>{posts.length}</strong> Posts
+          </span>
+        </div>
+
+        {/* Action buttons */}
+        <div className="flex justify-center gap-3 mt-3">
+          {isOwnProfile ? (
+            <Button
+              onClick={() => navigate(`/edit-profile/${username}/${userId}`)}
+            >
+              Edit Profile
+            </Button>
+          ) : (
+            <>
+              <Button onClick={handleFollowToggle}>
+                {isFollowing ? "Unfollow" : "Follow"}
               </Button>
-            ) : (
-              <>
-                <Button onClick={handleFollowToggle}>
-                  {isFollowing ? "Unfollow" : "Follow"}
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => navigate(`/messages/${user.username}`)}
-                >
-                  <MessageSquare className="w-4 h-4 mr-1" /> Message
-                </Button>
-              </>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {user.socials && (
-        <div className="flex gap-4 text-blue-600 justify-center sm:justify-start">
-          {profile?.socialLinks?.twitter && (
-            <a
-              href={profile.socialLinks.twitter}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:underline"
-            >
-              Twitter
-            </a>
-          )}
-          {profile?.socialLinks?.instagram && (
-            <a
-              href={profile.socialLinks.instagram}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:underline"
-            >
-              Instagram
-            </a>
-          )}
-          {profile?.socialLinks?.linkedin && (
-            <a
-              href={profile.socialLinks.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:underline"
-            >
-              LinkedIn
-            </a>
+              <Button
+                variant="outline"
+                onClick={() => navigate(`/messages/${user.username}`)}
+              >
+                <MessageSquare className="w-4 h-4 mr-1" /> Message
+              </Button>
+            </>
           )}
         </div>
-      )}
-
-      <div className="grid grid-cols-3 gap-1">
-        {posts.length === 0 ? (
-          <p className="text-gray-500 col-span-full text-center">
-            No posts yet
-          </p>
-        ) : (
-          posts.map((post) => (
-            <div
-              key={post._id}
-              className="aspect-square bg-black overflow-hidden"
-            >
-              <img
-                src={post.image}
-                alt="Post"
-                className="w-full h-full object-cover hover:opacity-80 transition duration-200"
-              />
-            </div>
-          ))
-        )}
       </div>
     </div>
-  );
+
+    {/* Social Links */}
+    {user.socials && (
+      <div className="flex gap-4 text-blue-600 justify-center">
+        {profile?.socialLinks?.twitter && (
+          <a
+            href={profile.socialLinks.twitter}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:underline"
+          >
+            Twitter
+          </a>
+        )}
+        {profile?.socialLinks?.instagram && (
+          <a
+            href={profile.socialLinks.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:underline"
+          >
+            Instagram
+          </a>
+        )}
+        {profile?.socialLinks?.linkedin && (
+          <a
+            href={profile.socialLinks.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:underline"
+          >
+            LinkedIn
+          </a>
+        )}
+      </div>
+    )}
+
+    {/* Posts Grid */}
+    <div className="grid grid-cols-3 gap-1">
+      {posts.length === 0 ? (
+        <p className="text-gray-500 col-span-full text-center">
+          No posts yet
+        </p>
+      ) : (
+        posts.map((post) => (
+          <div
+            key={post._id}
+            className="aspect-square bg-black overflow-hidden"
+          >
+            <img
+              src={post.image}
+              alt="Post"
+              className="w-full h-full object-cover hover:opacity-80 transition duration-200"
+            />
+          </div>
+        ))
+      )}
+    </div>
+  </div>
+);
 };
 
 export default UserProfile;
