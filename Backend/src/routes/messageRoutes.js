@@ -56,7 +56,7 @@ module.exports = (io) => {
         return res.status(400).json({ message: "No file uploaded" });
       }
 
-      const fileUrl = `${req.protocol}://${req.get("host")}/uploads/messages/${req.file.filename}`;
+      const fileUrl = `https://stark-socialmedia.onrender.com/uploads/messages/${req.file.filename}`;
       res.status(200).json({ url: fileUrl });
     } catch (error) {
       console.error("❌ File upload failed:", error);
