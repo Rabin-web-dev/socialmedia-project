@@ -7,6 +7,7 @@ import ChatBody from "../components/Chat/ChatBody";
 import ChatInput from "../components/Chat/ChatInput";
 import useSocketContext from "../hooks/useSocketContext";
 import IncomingCallModal from "../components/Model/IncomingCallModal";
+import MessageOptionsModal from "../components/Chat/MessageOptionsModal";
 
 const Messages = () => {
   const auth = useSelector((state) => state.auth);
@@ -21,10 +22,40 @@ const Messages = () => {
   const [friend, setFriend] = useState(stateFriend || null);
   const [messages, setMessages] = useState([]);
   const [incomingCall, setIncomingCall] = useState(null);
+  const [selectedMessage, setSelectedMessage] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
   const messagesRef = useRef([]);
   const ringtoneRef = useRef(null);
   const callTimeoutRef = useRef(null);
   const token = localStorage.getItem("token");
+
+  const handleMessageClick = (msg) => {
+      setSelectedMessage(msg);
+      setModalOpen(true);
+    };
+
+    const handleDelete = async () => {
+  try {
+    await api.delete(`/messages/${selectedMessage._id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setMessages((prev) => prev.filter((m) => m._id !== selectedMessage._id));
+  } catch (err) {
+    console.error("Error deleting message:", err);
+  }
+  setModalOpen(false);
+};
+
+const handleCopy = () => {
+  navigator.clipboard.writeText(selectedMessage?.content || "");
+  setModalOpen(false);
+};
+
+const handleEdit = () => {
+  console.log("Editing message:", selectedMessage);
+  setModalOpen(false);
+  // TODO: add edit message UI
+};
 
   const fetchUser = useCallback(async () => {
     try {
@@ -140,7 +171,7 @@ const Messages = () => {
       socket.off("messageSeen", handleSeen);
       socket.off("incomingCall", handleIncomingCall);
     };
-  }, [socket, friend, user._id]);
+  }, [socket, friend, user._id, token, selectedMessage]);
 
   if (!user || !friend)
     return <div className="p-4 text-gray-500">Loading chat...</div>;
@@ -161,6 +192,7 @@ const Messages = () => {
           messages={messages}
           currentUserId={user._id}
           selectedUser={friend}
+          onMessageClick={handleMessageClick}
         />
       </div>
 
@@ -208,6 +240,46 @@ const Messages = () => {
           }}
         />
       )}
+
+      <MessageOptionsModal
+  isOpen={modalOpen}
+  onClose={() => setModalOpen(false)}
+  onDelete={handleDelete}
+  onCopy={handleCopy}
+  onEdit={handleEdit}
+  onReact={async (emoji) => {
+  if (!selectedMessage) return;
+
+  // optimistic local update (match backend shape: { user: userId, emoji })
+  setMessages(prev =>
+    prev.map(m =>
+      m._id === selectedMessage._id
+        ? { ...m, reactions: [...(m.reactions || []).filter(r => String(r.user) !== String(user._id)), { user: user._id, emoji }] }
+        : m
+    )
+  );
+
+  // send to backend using PUT (since route is router.put)
+  try {
+    await api.put(`/messages/${selectedMessage._id}/react`, { emoji }, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    // success — backend emits the socket update, so UI will sync
+  } catch (err) {
+    console.error("Error reacting to message:", err);
+    // rollback optimistic update on failure (optional)
+    setMessages(prev =>
+      prev.map(m =>
+        m._id === selectedMessage._id
+          ? { ...m, reactions: (m.reactions || []).filter(r => !(String(r.user) === String(user._id) && r.emoji === emoji)) }
+          : m
+      )
+    );
+  }
+}}
+
+/>
+
 
       <audio ref={ringtoneRef} src="/sounds/ringtone.mp3" loop hidden />
     </div>

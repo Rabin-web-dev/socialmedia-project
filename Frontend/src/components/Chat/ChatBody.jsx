@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from "react";
 import useSocketContext from "../../hooks/useSocketContext";
 
-const ChatBody = ({ messages, currentUserId, selectedUser }) => {
+const ChatBody = ({ messages, currentUserId, selectedUser, onMessageClick }) => {
   const messageEndRef = useRef(null);
-  const { typingStatus } = useSocketContext();
+  const { socket, typingStatus } = useSocketContext(); // ✅ Added socket
 
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -17,8 +17,55 @@ const ChatBody = ({ messages, currentUserId, selectedUser }) => {
     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
+  // ✅ Listen for reaction updates
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on("messageReactionUpdated", (updatedMsg) => {
+      const idx = messages.findIndex((m) => m._id === updatedMsg._id);
+      if (idx !== -1) {
+        messages[idx] = updatedMsg;
+      }
+    });
+
+    return () => socket.off("messageReactionUpdated");
+  }, [socket, messages]);
+
+  // ✅ Reaction display helper
+  const renderReactions = (msg) => {
+    if (!msg.reactions || msg.reactions.length === 0) return null;
+
+    // Group by emoji type and count
+    const grouped = msg.reactions.reduce((acc, r) => {
+      acc[r.emoji] = acc[r.emoji] ? acc[r.emoji] + 1 : 1;
+      return acc;
+    }, {});
+
+    return (
+      <div className="flex gap-1 mt-1 justify-end">
+        {Object.entries(grouped).map(([emoji, count]) => {
+          const userReacted = msg.reactions.some(
+            (r) =>
+              r.emoji === emoji &&
+              String(r.user?._id || r.user) === String(currentUserId)
+          );
+          return (
+            <div
+              key={emoji}
+              className={`px-1.5 py-0.5 rounded-full text-xs font-medium flex items-center gap-1 border ${
+                userReacted ? "bg-blue-100 border-blue-400" : "bg-gray-100 border-gray-300"
+              }`}
+            >
+              <span>{emoji}</span>
+              <span>{count > 1 ? count : ""}</span>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
   const renderMessageContent = (msg) => {
-    // ✅ Shared Post Preview
     if (msg.messageType === "post" && msg.sharedPost) {
       return (
         <div className="p-2 border rounded-lg bg-gray-100">
@@ -42,7 +89,6 @@ const ChatBody = ({ messages, currentUserId, selectedUser }) => {
       );
     }
 
-    // ✅ Other message types
     if (msg.messageType === "image") {
       return <img src={msg.media} alt="media" className="max-w-[200px] rounded" />;
     }
@@ -86,6 +132,7 @@ const ChatBody = ({ messages, currentUserId, selectedUser }) => {
               <div
                 key={msg._id || i}
                 className={`flex items-end mb-2 ${isOwn ? "justify-end" : "justify-start"}`}
+                onClick={() => onMessageClick && onMessageClick(msg)}
               >
                 {!isOwn && (
                   <img
@@ -105,6 +152,9 @@ const ChatBody = ({ messages, currentUserId, selectedUser }) => {
                   >
                     {renderMessageContent(msg)}
                   </div>
+
+                  {/* ✅ Reaction display just below bubble */}
+                  {renderReactions(msg)}
 
                   <div className="flex items-center gap-1 text-xs text-gray-500 justify-end">
                     {isOwn && (
