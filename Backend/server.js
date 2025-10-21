@@ -34,6 +34,9 @@ const io = new Server(server, {
   },
 });
 
+const { setSocketInstance } = require("./src/utils/createNotification.js");
+setSocketInstance(io);
+
 // ✅ Attach io & activeUsers to app so routes can access it
 const activeUsers = new Map();
 app.set("io", io);
@@ -199,7 +202,7 @@ io.on("connection", (socket) => {
 const authRoutes = require("./src/routes/authenticationRoutes.js");
 const userRoutes = require("./src/routes/userRoutes.js");
 const postRoutes = require("./src/routes/postRoutes.js");
-const messageRouter = require("./src/routes/messageRoutes.js")(io);
+const messageRoutes = require("./src/routes/messageRoutes.js")(io)
 const notificationRoutes = require("./src/routes/notificationRoutes.js");
 const friendRequests = require("./src/routes/friendRequestRoutes.js");
 const getId = require("./src/routes/userIdGetRoutes.js");
@@ -210,7 +213,8 @@ const searchRoutes = require("./src/routes/searchRoutes.js");
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
-app.use("/api/messages", messageRouter);
+console.log("✅ Message routes loaded!");
+app.use("/api/messages", messageRoutes);
 app.use("/uploads/messages", express.static("uploads/messages"));
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/friends", friendRequests);

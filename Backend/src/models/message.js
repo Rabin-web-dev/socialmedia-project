@@ -1,5 +1,10 @@
 const mongoose = require("mongoose");
 
+const reactionSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  emoji: { type: String, required: true },
+});
+
 const messageSchema = new mongoose.Schema(
   {
     sender: {
@@ -38,6 +43,7 @@ const messageSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    reactions: [reactionSchema],
   },
   { timestamps: true }
 );

@@ -24,11 +24,14 @@ router.post("/", authMiddleware, async (req, res) => {
 
     // ✅ Emit real-time notification if Socket.IO is active
     const io = req.app.get("io");
-    if (io) {
-      io.to(receiver.toString()).emit("newNotification", notification);
+    const populatedNotification = await Notification.findById(notification._id)
+  .populate("sender", "username profilePic")
+  .populate("post", "image video content");
+    if (io && populatedNotification) {
+      io.to(receiver.toString()).emit("newNotification", populatedNotification);
     }
 
-    res.status(201).json({ message: "Notification created successfully", notification });
+    res.status(201).json({ message: "Notification created successfully", notification: populatedNotification, });
   } catch (error) {
     console.error("❌ Error creating notification:", error);
     res.status(500).json({ message: "Server error", error: error.message });
@@ -139,6 +142,10 @@ router.put("/read-all", authMiddleware, async (req, res) => {
 router.delete("/:id", authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid notification ID" });
+    }
 
     const notification = await Notification.findOneAndDelete({
       _id: id,

@@ -1,5 +1,5 @@
 const express = require("express");
-const router = express.Router();
+
 const Message = require("../models/message");
 const authMiddleware = require("../middleware/authMiddleware");
 const multer = require("multer");
@@ -22,6 +22,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 module.exports = (io) => {
+  const router = express.Router();
   // ✅ Send message (text or media)
   router.post("/", authMiddleware, async (req, res) => {
     try {
@@ -113,7 +114,14 @@ module.exports = (io) => {
       const message = await Message.findById(req.params.id);
       if (!message) return res.status(404).json({ message: "Message not found" });
 
-      if (String(message.sender) !== req.user.id) {
+      console.log("🟡 Auth user:", req.user.id);
+      console.log("🟢 Message sender:", String(message.sender));
+      console.log("🔵 Message receiver:", String(message.receiver));
+
+      if (
+        String(message.sender) !== req.user.id &&
+        String(message.receiver) !== req.user.id
+      ) {
         return res.status(403).json({ message: "Unauthorized" });
       }
 
@@ -125,5 +133,67 @@ module.exports = (io) => {
     }
   });
 
-  return router;
+  router.put("/:id/react", authMiddleware, async (req, res) => {
+  try {
+    const { emoji } = req.body;
+    const userId = req.user.id || req.user._id; // be flexible
+    const messageId = req.params.id;
+
+    console.log("🟢 Incoming Reaction Request:");
+    console.log("➡ Message ID:", messageId);
+    console.log("➡ Emoji:", emoji);
+    console.log("➡ User ID:", userId);
+
+    if (!emoji) {
+       console.log("❌ Missing emoji in request body");
+      return res.status(400).json({ message: "Emoji is required" });
+    }
+
+    const message = await Message.findById(messageId);
+    if (!message) {
+      console.log("❌ Message not found in DB");
+      return res.status(404).json({ message: "Message not found" });
+    }
+
+     console.log("✅ Message found:", message._id);
+
+    // ensure reactions array exists
+    if (!Array.isArray(message.reactions)) message.reactions = [];
+
+    // Remove previous reaction by this user (so one reaction per user)
+    message.reactions = message.reactions.filter(
+      (r) => String(r.userId) !== String(userId)
+    );
+
+    // Add new reaction
+    message.reactions.push({ userId, emoji });
+
+    console.log("💾 Saving updated reactions:", message.reactions);
+
+    await message.save();
+
+    // populate and emit
+    const populated = await Message.findById(message._id)
+      .populate("sender", "username profilePic")
+      .populate("receiver", "username profilePic")
+      .lean();
+
+    // emit to both sender and receiver (if connected)
+    if (populated.receiver) io.to(String(populated.receiver._id)).emit("messageReactionUpdated", populated);
+    if (populated.sender) io.to(String(populated.sender._id)).emit("messageReactionUpdated", populated);
+
+    console.log("✅ Reaction saved successfully!");
+    return res.status(200).json({ success: true, message: populated });
+  } catch (error) {
+    console.error("❌ Reaction error:", error);
+    return res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
+// 🧪 Test route — helps confirm deployment
+  router.get("/test", (req, res) => {
+    res.json({ message: "✅ Message routes working fine!" });
+  });
+
+return router;
 };
